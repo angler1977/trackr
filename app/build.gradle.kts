@@ -130,6 +130,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.okhttp)
     implementation(libs.amap.search)
+    implementation(libs.amap.map)
 
     testImplementation(libs.junit)
     testImplementation(libs.org.json)

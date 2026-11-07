@@ -133,12 +133,22 @@ class StopDetailViewModel(
 
                 val resolvedName = stopList.firstOrNull()?.name?.takeIf { it.isNotBlank() }
                     ?: initialStopName.ifBlank { "站点详情" }
-                val currentPhyId = currentSelected?.physicalStId
-                val newIndex = if (currentPhyId != null && stopList.isNotEmpty()) {
-                    val idx = stopList.indexOfFirst { it.physicalStId == currentPhyId }
-                    if (idx >= 0) idx else _uiState.value.selectedStopIndex.coerceIn(0, stopList.size - 1)
-                } else if (stopList.isNotEmpty()) {
-                    _uiState.value.selectedStopIndex.coerceIn(0, stopList.size - 1)
+                // Preserve selection by stable platform identity; don't silently switch
+                // to whatever happens to occupy the previous list index after refresh.
+                val newIndex = if (stopList.isNotEmpty() && currentSelected != null) {
+                    val physicalId = currentSelected.physicalStId?.takeIf { it.isNotBlank() }
+                    val physicalMatch = physicalId?.let { id ->
+                        stopList.indexOfFirst { it.physicalStId == id }
+                    } ?: -1
+                    val secondaryMatch = if (physicalMatch < 0 &&
+                            !currentSelected.namesakeStId.isNullOrBlank() &&
+                            currentSelected.stopId.isNotBlank()) {
+                        stopList.indexOfFirst {
+                            it.namesakeStId == currentSelected.namesakeStId &&
+                                    it.stopId == currentSelected.stopId
+                        }
+                    } else -1
+                    (physicalMatch.takeIf { it >= 0 } ?: secondaryMatch.takeIf { it >= 0 }) ?: 0
                 } else 0
 
                 _uiState.update {

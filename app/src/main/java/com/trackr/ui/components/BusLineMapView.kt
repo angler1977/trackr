@@ -9,6 +9,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
+import com.amap.api.maps.MapsInitializer
+import com.trackr.data.remote.amap.AmapSdkManager
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -32,6 +36,14 @@ fun BusLineMapView(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val customKey = remember { context.getSharedPreferences("amap_settings", android.content.Context.MODE_PRIVATE).getString("android_key", "").orEmpty() }
+    val apiKey = AmapSdkManager.getEffectiveApiKey(customKey)
+    if (apiKey.isBlank()) {
+        Text("请先在「更多 → 地图与服务」配置高德 Android Key", modifier = modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.onSurfaceVariant)
+        return
+    }
+    // MapsInitializer API key must be set before MapView is constructed.
+    remember(apiKey) { MapsInitializer.setApiKey(apiKey); AmapSdkManager.applyApiKey(context, apiKey); true }
     val lifecycleOwner = LocalLifecycleOwner.current
     val mapView = remember { MapView(context).apply { onCreate(Bundle()) } }
     val amap = remember(mapView) { mapView.map }

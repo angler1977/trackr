@@ -35,6 +35,7 @@ android {
         versionName = "0.0.3"
 
         buildConfigField("String", "AMAP_ANDROID_KEY", "\"$amapAndroidKey\"")
+        manifestPlaceholders["AMAP_ANDROID_KEY"] = amapAndroidKey
 
         vectorDrawables {
             useSupportLibrary = true
@@ -129,7 +130,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.okhttp)
-    implementation(libs.amap.search)
+    implementation(libs.amap.map)
 
     testImplementation(libs.junit)
     testImplementation(libs.org.json)

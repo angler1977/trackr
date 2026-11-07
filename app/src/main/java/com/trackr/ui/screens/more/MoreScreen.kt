@@ -280,6 +280,8 @@ fun MoreScreen(
                 }
             }
 
+            item(key = "amap_key_settings", contentType = "more_section") { AmapKeySettings() }
+
             // 2. 出行辅助与工具分组 (Transit Assistance & Tools)
             item(key = "transit_tools_section", contentType = "more_section") {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

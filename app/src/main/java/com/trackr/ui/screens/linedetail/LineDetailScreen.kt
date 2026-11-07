@@ -64,6 +64,7 @@ import com.trackr.service.BusTrackingService
 import com.trackr.service.vendor.LiveUpdatePromotion
 import com.trackr.service.vendor.OppoFluidCloudAdapter
 import com.trackr.service.vendor.XiaomiFocusAdapter
+import com.trackr.ui.components.BusLineMapView
 import com.trackr.ui.components.ExpressiveRouteRail
 import com.trackr.ui.components.FocusPermissionGuideDialog
 import com.trackr.ui.components.RouteRailLayoutMode
@@ -175,6 +176,58 @@ fun LineDetailScreen(
                     lineDetail = lineDetail,
                     onNavigateBack = onNavigateBack
                 )
+
+                // Show provider-supplied first-stop departure prediction directly on the route page.
+                lineDetail.nextDepartureFromStart?.takeIf { it.isNotBlank() }?.let { departure ->
+                    Surface(
+                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        shape = RoundedCornerShape(14.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 6.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "始发站预计发车",
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                    fontSize = 12.sp
+                                )
+                                Text(
+                                    text = departure,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                    fontSize = 22.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                            Text(
+                                text = "预测时间",
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                fontSize = 12.sp
+                            )
+                        }
+                    }
+                }
+
+                // Geographic route view: actual map, station markers, and live bus markers.
+                Card(
+                    shape = RoundedCornerShape(18.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    Column(modifier = Modifier.padding(8.dp)) {
+                        Text(
+                            text = "地图 / 站点与车辆",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                        BusLineMapView(detail = lineDetail)
+                    }
+                }
 
                 // 错误/提醒提示条
                 if (uiState.errorMessage != null) {

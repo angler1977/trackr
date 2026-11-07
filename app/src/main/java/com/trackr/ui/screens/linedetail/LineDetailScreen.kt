@@ -64,6 +64,7 @@ import com.trackr.service.BusTrackingService
 import com.trackr.service.vendor.LiveUpdatePromotion
 import com.trackr.service.vendor.OppoFluidCloudAdapter
 import com.trackr.service.vendor.XiaomiFocusAdapter
+import com.trackr.ui.components.BusLineMapView
 import com.trackr.ui.components.ExpressiveRouteRail
 import com.trackr.ui.components.FocusPermissionGuideDialog
 import com.trackr.ui.components.RouteRailLayoutMode
@@ -208,6 +209,23 @@ fun LineDetailScreen(
                                 fontSize = 12.sp
                             )
                         }
+                    }
+                }
+
+                // Geographic route view: actual map, station markers, and live bus markers.
+                Card(
+                    shape = RoundedCornerShape(18.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    Column(modifier = Modifier.padding(8.dp)) {
+                        Text(
+                            text = "地图 / 站点与车辆",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                        BusLineMapView(detail = lineDetail)
                     }
                 }
 

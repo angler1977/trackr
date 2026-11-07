@@ -176,6 +176,41 @@ fun LineDetailScreen(
                     onNavigateBack = onNavigateBack
                 )
 
+                // Show provider-supplied first-stop departure prediction directly on the route page.
+                lineDetail.nextDepartureFromStart?.takeIf { it.isNotBlank() }?.let { departure ->
+                    Surface(
+                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        shape = RoundedCornerShape(14.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 6.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "始发站预计发车",
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                    fontSize = 12.sp
+                                )
+                                Text(
+                                    text = departure,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                    fontSize = 22.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                            Text(
+                                text = "预测时间",
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                fontSize = 12.sp
+                            )
+                        }
+                    }
+                }
+
                 // 错误/提醒提示条
                 if (uiState.errorMessage != null) {
                     Surface(

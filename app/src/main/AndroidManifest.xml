@@ -44,6 +44,7 @@
         android:theme="@style/Theme.Trackr"
         android:usesCleartextTraffic="true"
         android:enableOnBackInvokedCallback="true">
+        <meta-data android:name="com.amap.api.v2.apikey" android:value="${AMAP_ANDROID_KEY}" />
 
         <activity
             android:name=".MainActivity"

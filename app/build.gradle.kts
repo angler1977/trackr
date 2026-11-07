@@ -130,7 +130,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.okhttp)
-    implementation(libs.amap.search)
     implementation(libs.amap.map)
 
     testImplementation(libs.junit)

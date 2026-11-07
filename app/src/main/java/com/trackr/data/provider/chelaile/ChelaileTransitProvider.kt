@@ -111,10 +111,16 @@ class ChelaileTransitProvider(
                             )
                         }.getOrNull()
 
+                        // Physical station identity is authoritative; never borrow another platform's data.
                         val matched = subResult?.firstOrNull {
-                            (!stop.physicalStId.isNullOrBlank() && it.physicalStId == stop.physicalStId && it.lines.any { l -> l.line.lineId.isNotBlank() }) ||
-                                    (stop.stopId.isNotBlank() && it.stopId == stop.stopId && it.lines.any { l -> l.line.lineId.isNotBlank() })
-                        } ?: subResult?.firstOrNull { it.lines.any { l -> l.line.lineId.isNotBlank() } }
+                            it.lines.any { l -> l.line.lineId.isNotBlank() } &&
+                                    if (!stop.physicalStId.isNullOrBlank()) {
+                                        it.physicalStId == stop.physicalStId
+                                    } else {
+                                        stop.stopId.isNotBlank() && it.stopId == stop.stopId &&
+                                                (stop.namesakeStId.isNullOrBlank() || it.namesakeStId == stop.namesakeStId)
+                                    }
+                        }
 
                         if (matched != null && matched.lines.isNotEmpty()) {
                             stop.copy(
@@ -160,8 +166,11 @@ class ChelaileTransitProvider(
                                     userLng = request.userLng
                                 )
                             }.getOrNull()
-                            val matched = subResult?.firstOrNull { it.physicalStId == stop.physicalStId && it.lines.any { l -> l.line.lineId.isNotBlank() } }
-                                ?: subResult?.firstOrNull { it.lines.any { l -> l.line.lineId.isNotBlank() } }
+                            // Do not fall back to a different physical platform.
+                            val matched = subResult?.firstOrNull {
+                                it.physicalStId == stop.physicalStId &&
+                                        it.lines.any { l -> l.line.lineId.isNotBlank() }
+                            }
                             if (matched != null) {
                                 stop.copy(
                                     lines = matched.lines,
